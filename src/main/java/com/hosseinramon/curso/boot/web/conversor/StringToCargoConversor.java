@@ -2,10 +2,12 @@ package com.hosseinramon.curso.boot.web.conversor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import com.hosseinramon.curso.boot.domain.Cargo;
 import com.hosseinramon.curso.boot.service.CargoService;
 
+@Component
 public class StringToCargoConversor implements Converter<String, Cargo> {
 
 	@Autowired
