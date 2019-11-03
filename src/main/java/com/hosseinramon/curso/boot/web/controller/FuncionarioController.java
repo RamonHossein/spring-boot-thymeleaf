@@ -3,11 +3,16 @@ package com.hosseinramon.curso.boot.web.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +25,7 @@ import com.hosseinramon.curso.boot.domain.Funcionario;
 import com.hosseinramon.curso.boot.domain.UF;
 import com.hosseinramon.curso.boot.service.CargoService;
 import com.hosseinramon.curso.boot.service.FuncionarioService;
+import com.hosseinramon.curso.boot.web.validator.FuncionarioValidator;
 
 @Controller
 @RequestMapping("/funcionarios")
@@ -29,6 +35,11 @@ public class FuncionarioController {
 	private FuncionarioService service;
 	@Autowired
 	private CargoService cargoService;
+	
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.addValidators(new FuncionarioValidator());
+	}
 	
 	@GetMapping("/cadastrar")
 	public String cadastrar(Funcionario funcionario) {
@@ -43,7 +54,10 @@ public class FuncionarioController {
 	}
 	
 	@PostMapping("/salvar")
-	public String salvar(Funcionario funcionario, RedirectAttributes attr) {
+	public String salvar(@Valid Funcionario funcionario, BindingResult result, RedirectAttributes attr) {
+		
+		if(result.hasErrors())
+			return "/funcionario/cadastro";
 		
 		service.salvar(funcionario);
 		attr.addFlashAttribute("success", "Funcionario inserido com sucesso.");
@@ -58,7 +72,10 @@ public class FuncionarioController {
 	}
 	
 	@PostMapping("/editar")
-	public String editar(Funcionario funcionario, RedirectAttributes attr) {
+	public String editar(@Valid Funcionario funcionario, BindingResult result, RedirectAttributes attr) {
+		
+		if(result.hasErrors())
+			return "/funcionario/cadastro";
 		
 		service.editar(funcionario);
 		attr.addFlashAttribute("success", "Funcionario editado com sucesso.");
